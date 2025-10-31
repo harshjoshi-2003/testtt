@@ -1,0 +1,445 @@
+# create app (Angular 15+ recommended)
+ng new figma-template --routing=false --style=scss
+cd figma-template
+
+# generate components
+ng g c layout/top-nav
+ng g c layout/side-nav
+ng g c layout/stats-panel
+ng g c layout/inventory-table
+ng g c layout/floating-fab
+ng g c layout/app-footer
+
+/* src/styles.scss */
+:root {
+  --bg: #f3f5f7;
+  --card-bg: #ffffff;
+  --panel-bg: #f9fafb;
+  --accent: #c62828; /* red-ish FAB */
+  --dark: #1f2937;   /* top nav background */
+  --muted: #6b7280;
+  --border: #e6e7ea;
+  --primary-text: #111827;
+  --glass: rgba(255,255,255,0.85);
+  --shadow: 0 4px 10px rgba(16,24,40,0.06);
+  --radius: 8px;
+  --gap: 16px;
+}
+
+* { box-sizing: border-box; }
+html,body,#root { height:100%; }
+body {
+  margin:0;
+  font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--primary-text);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  font-size:14px;
+}
+
+/* small utility */
+.container {
+  max-width:1200px;
+  margin: 18px auto;
+  padding: 0 18px;
+}
+
+<app-top-nav></app-top-nav>
+
+<div class="main">
+  <app-side-nav class="side"></app-side-nav>
+
+  <main class="content container">
+    <div class="dashboard-grid">
+      <section class="left-col">
+        <app-stats-panel></app-stats-panel>
+      </section>
+
+      <section class="right-col">
+        <app-inventory-table></app-inventory-table>
+      </section>
+    </div>
+
+    <app-floating-fab></app-floating-fab>
+  </main>
+</div>
+
+<app-app-footer></app-app-footer>
+
+/* src/app/app.component.scss */
+:host { display:block; }
+
+.main {
+  display:flex;
+  min-height: calc(100vh - 72px); /* leave room for top nav/footer */
+}
+
+/* side nav width */
+.side { width: 72px; }
+
+/* content occupies remaining */
+.content {
+  flex:1;
+  padding-top: 20px;
+  padding-bottom: 48px;
+}
+
+.dashboard-grid {
+  display:grid;
+  grid-template-columns: 360px 1fr;
+  gap: 22px;
+}
+
+/* responsive */
+@media (max-width: 940px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .side { display:none; }
+}
+
+
+<header class="top-nav">
+  <div class="left">
+    <div class="logo">ADAM</div>
+    <nav class="menu">
+      <a>Dashboard</a>
+      <a>Statistics</a>
+      <a>RECS</a>
+      <a>Accounts</a>
+      <a>Inventory</a>
+    </nav>
+  </div>
+
+  <div class="right">
+    <div class="search">🔍</div>
+    <div class="user">
+      <div class="name">Jacob Winslet</div>
+      <div class="avatar">JW</div>
+    </div>
+  </div>
+</header>
+
+
+==src/app/layout/top-nav/top-nav.component.scss
+.top-nav {
+  height:64px;
+  background: linear-gradient(180deg, var(--dark), #111827);
+  color: #fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 0 22px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.top-nav .logo {
+  font-weight:700;
+  margin-right:18px;
+  padding:6px 10px;
+  background: rgba(255,255,255,0.04);
+  border-radius:6px;
+}
+
+.top-nav .menu a {
+  margin-right:12px;
+  opacity:0.9;
+  cursor:default;
+}
+
+.top-nav .right {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.user {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.avatar {
+  width:36px;height:36px;border-radius:6px;
+  background:#111827;color:#fff;display:flex;align-items:center;justify-content:center;
+  font-weight:600;font-size:13px;
+}
+
+==src/app/layout/side-nav/side-nav.component.html
+<aside class="sidenav">
+  <div class="icon">🏠</div>
+  <div class="icon">📊</div>
+  <div class="icon">⚙️</div>
+  <div class="icon">🧾</div>
+  <div class="icon">⚡</div>
+</aside>
+
+==src/app/layout/side-nav/side-nav.component.scss
+.sidenav {
+  background: var(--card-bg);
+  height: calc(100vh - 64px - 40px); /* minus top nav & some margin */
+  margin: 18px 12px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:12px 6px;
+  gap:10px;
+  border:1px solid var(--border);
+}
+.icon {
+  width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  background: var(--panel-bg);
+  cursor:pointer;
+}
+
+==src/app/layout/stats-panel/stats-panel.component.html
+<section class="stats-card">
+  <div class="stats-inner">
+    <div class="donut">
+      <!-- simple svg donut -->
+      <svg viewBox="0 0 36 36" class="circular">
+        <path class="bg" d="M18 2.0845
+          a 15.9155 15.9155 0 0 1 0 31.831
+          a 15.9155 15.9155 0 0 1 0 -31.831" />
+        <path class="slice" stroke-dasharray="70,30" d="M18 2.0845
+          a 15.9155 15.9155 0 0 1 0 31.831
+          a 15.9155 15.9155 0 0 1 0 -31.831" />
+        <text x="18" y="20" text-anchor="middle" class="donut-text">70%</text>
+      </svg>
+    </div>
+
+    <div class="tiles">
+      <div class="tile">
+        <div class="label">Total Accounts</div>
+        <div class="value">10,000</div>
+      </div>
+      <div class="tile">
+        <div class="label">TLM Accounts</div>
+        <div class="value">7,000</div>
+      </div>
+      <div class="tile">
+        <div class="label">Sire Accounts</div>
+        <div class="value">3,000</div>
+      </div>
+      <div class="tile">
+        <div class="label">Onboarded Accounts</div>
+        <div class="value">500</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+==src/app/layout/stats-panel/stats-panel.component.scss
+.stats-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding:18px;
+  box-shadow: var(--shadow);
+  border:1px solid var(--border);
+}
+
+.stats-inner {
+  display:flex;
+  gap:18px;
+  align-items:center;
+}
+
+/* donut */
+.donut { width:140px; display:flex; align-items:center; justify-content:center; }
+.circular { width:120px; height:120px; }
+.circular .bg { fill:none; stroke:#f1f5f9; stroke-width:4; }
+.circular .slice { fill:none; stroke:#2b6cb0; stroke-width:4; stroke-linecap:round; transform:rotate(-90deg); transform-origin:center; }
+.donut-text { font-size:8px; fill:#374151; font-weight:700; }
+
+/* tiles */
+.tiles { display:grid; grid-template-columns:1fr; gap:10px; width:100%; }
+.tile {
+  background: var(--panel-bg);
+  padding:10px;
+  border-radius:8px;
+  border:1px solid var(--border);
+}
+.tile .label { color:var(--muted); font-size:12px; }
+.tile .value { font-weight:700; font-size:16px; margin-top:6px; }
+
+
+==src/app/layout/inventory-table/inventory-table.component.html
+<section class="inventory">
+  <div class="inv-header">
+    <h3>Inventory</h3>
+    <div class="controls">
+      <button class="btn">Export</button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table class="grid">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Reconciliation Platform</th>
+          <th>Account Name</th>
+          <th>Account ID</th>
+          <th>Asset Class</th>
+          <th>Account Type</th>
+          <th>Region/Country</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- generate many rows to show scrolling -->
+        <tr *ngFor="let r of rows; let i = index">
+          <td>{{i+1}}</td>
+          <td>Lorem Ipsum</td>
+          <td>U-FDR-...-SHEET</td>
+          <td>8343687</td>
+          <td>FX</td>
+          <td>Lorem Ipsum</td>
+          <td>EU</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
+==src/app/layout/inventory-table/inventory-table.component.ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-inventory-table',
+  templateUrl: './inventory-table.component.html',
+  styleUrls: ['./inventory-table.component.scss']
+})
+export class InventoryTableComponent {
+  rows = Array.from({length: 20}); // placeholder rows
+}
+
+
+==src/app/layout/inventory-table/inventory-table.component.scss
+.inventory {
+  background: var(--card-bg);
+  padding:14px;
+  border-radius: var(--radius);
+  border:1px solid var(--border);
+  box-shadow: var(--shadow);
+  height: 600px; /* fixed to allow internal scroll */
+  display:flex;
+  flex-direction:column;
+}
+
+.inv-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+
+.table-wrap {
+  flex:1;
+  overflow:auto;
+  border-top:1px solid var(--border);
+  padding-top:10px;
+}
+
+table.grid {
+  width:100%;
+  border-collapse:collapse;
+  min-width:900px;
+}
+
+thead th {
+  text-align:left;
+  font-weight:600;
+  padding:10px 8px;
+  background: transparent;
+  position: sticky;
+  top:0;
+  backdrop-filter: blur(4px);
+}
+
+tbody td {
+  padding:12px 8px;
+  border-bottom:1px solid var(--border);
+  color: #374151;
+  font-size:13px;
+}
+
+tbody tr:hover td {
+  background: rgba(0,0,0,0.02);
+}
+
+
+==src/app/layout/floating-fab/floating-fab.component.html
+<button class="fab">+</button>
+
+
+==src/app/layout/floating-fab/floating-fab.component.scss
+.fab {
+  position: fixed;
+  right: 34px;
+  bottom: 80px;
+  width:56px;height:56px;border-radius:12px;
+  background: var(--accent);
+  color:white;
+  border:none;
+  font-size:28px;
+  box-shadow: 0 8px 18px rgba(198,63,63,0.28);
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+
+
+=src/app/layout/app-footer/app-footer.component.html
+<footer class="app-footer">
+  <div class="container">
+    <div class="left">HSBC Global | Terms & Conditions</div>
+    <div class="right">© Copyright HSBC Bank 2023</div>
+  </div>
+</footer>
+
+
+==src/app/layout/app-footer/app-footer.component.scss
+.app-footer {
+  background: var(--card-bg);
+  padding:10px 0;
+  border-top:1px solid var(--border);
+  color:var(--muted);
+  font-size:13px;
+}
+.app-footer .container { display:flex; justify-content:space-between; align-items:center; }
+
+
+==Open src/app/app.module.ts and ensure your components are declared (Angular CLI usually does this automatically).
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppComponent } from './app.component';
+import { TopNavComponent } from './layout/top-nav/top-nav.component';
+import { SideNavComponent } from './layout/side-nav/side-nav.component';
+import { StatsPanelComponent } from './layout/stats-panel/stats-panel.component';
+import { InventoryTableComponent } from './layout/inventory-table/inventory-table.component';
+import { FloatingFabComponent } from './layout/floating-fab/floating-fab.component';
+import { AppFooterComponent } from './layout/app-footer/app-footer.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    TopNavComponent,
+    SideNavComponent,
+    StatsPanelComponent,
+    InventoryTableComponent,
+    FloatingFabComponent,
+    AppFooterComponent
+  ],
+  imports: [ BrowserModule ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+
+==Run
+ng serve --open
+
+
